@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-item>
+    <ion-label position="stacked">Email</ion-label>
+    <ion-input [(ngModel)]="form.email"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Password</ion-label>
+    <ion-input [(ngModel)]="form.password"></ion-input>
+  </ion-item>
+  <ion-button style="margin-bottom: 50px" expand="full" (click)="login()">
+    LOGIN
+  </ion-button>
+
+  <ion-button expand="full" (click)="loginWithFacebook()">
+    LOGIN WITH FACEBOOK
+    <ion-icon slot="start" name="logo-facebook"></ion-icon>
+  </ion-button>
+
+  <ion-button expand="full" color="danger" (click)="loginWithGoogle()">
+    LOGIN WITH GOOGLE
+    <ion-icon slot="start" name="logo-google"></ion-icon>
+  </ion-button>
+
+  <ion-button expand="full" color="light" (click)="register()">
+    REGISTER
+  </ion-button>
+
+</ion-content>

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { CrudService } from '../provider/crud.service';
 
 @Component({
   selector: 'app-list',
@@ -19,15 +22,52 @@ export class ListPage implements OnInit {
     'bluetooth',
     'build'
   ];
-  public items: Array<{ title: string; note: string; icon: string }> = [];
-  constructor() {
-    for (let i = 1; i < 11; i++) {
-      this.items.push({
-        title: 'Item ' + i,
-        note: 'This is item #' + i,
-        icon: this.icons[Math.floor(Math.random() * this.icons.length)]
-      });
-    }
+  public todoList: any = [];
+
+  constructor(private alertController: AlertController, private firestore: AngularFirestore, private crud: CrudService) {
+    this.todoList.map(todo => {
+      todo['icon'] = this.icons[Math.floor(Math.random() * this.icons.length)];
+    });
+    this.getTodoList();
+  }
+
+  async getTodoList() {
+    this.todoList = await this.crud.getTodoList();
+    console.log('list here', this.todoList);
+  }
+
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      header: 'New Item',
+      inputs: [
+        {
+          name: 'title',
+          type: 'text',
+          placeholder: 'Title'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: (data) => {
+            console.log('Confirm Ok');
+            this.crud.createTodo({
+              title: data.title,
+              isChecked: false,
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   ngOnInit() {
