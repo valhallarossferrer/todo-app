@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, NavController, PopoverController, Events } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { CrudService } from '../provider/crud.service';
 import { Router } from '@angular/router';
+import { PopoverComponent } from '../popover/popover.component';
 
 @Component({
   selector: 'app-collection',
@@ -16,9 +17,14 @@ export class CollectionPage implements OnInit {
     private alertController: AlertController,
     private firestore: AngularFirestore,
     private crud: CrudService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private popoverController: PopoverController,
+    private events: Events,
   ) {
     this.getCollection();
+    this.events.subscribe('delete: success', () => {
+      this.getCollection();
+    });
   }
 
   async getCollection() {
@@ -68,5 +74,22 @@ export class CollectionPage implements OnInit {
   // add back when alpha.4 is out
   navigate(item) {
     this.navCtrl.navigateForward('/list', { queryParams: { item } });
+  }
+
+  async presentPopover(ev: any, todolist) {
+
+    const popover = await this.popoverController.create({
+      component: PopoverComponent,
+      event: ev,
+      showBackdrop: false
+    });
+    popover.onWillDismiss().then(data => {
+      if (data.data.isDelete) {
+        console.log('delete mo na to');
+        this.crud.deleteTodoList(todolist);
+      }
+    });
+    return await popover.present();
+
   }
 }

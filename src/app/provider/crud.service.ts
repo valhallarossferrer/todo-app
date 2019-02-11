@@ -5,6 +5,7 @@ import {
 } from '@angular/fire/firestore';
 import { Todo } from '../models/todo.interface';
 import { TodoList } from '../models/todoList.interface';
+import { Events } from '@ionic/angular';
 
 
 
@@ -12,7 +13,7 @@ import { TodoList } from '../models/todoList.interface';
   providedIn: 'root',
 })
 export class CrudService {
-  constructor(public firestore: AngularFirestore) { }
+  constructor(public firestore: AngularFirestore, public events: Events) { }
 
   createTodo(todo: Todo) {
     return this.firestore.collection('todoList').add(todo);
@@ -27,7 +28,9 @@ export class CrudService {
     await this.firestore.collection('todoList').get().subscribe(todoList => {
       console.log('subscribe', todoList);
       todoList.docs.forEach(doc => {
-        list.push(doc.data());
+        const data = doc.data();
+        data.id = doc.id;
+        list.push(data);
       });
     });
     return list;
@@ -37,13 +40,23 @@ export class CrudService {
     return this.firestore.doc(`todoList/${todoId}`).delete();
   }
 
+  deleteTodoList(data: any): Promise<void> {
+    const newData = data;
+    newData.isDeleted = true;
+    return this.firestore.doc(`collection/${data.id}`).update(newData).then(() => {
+      this.events.publish('delete: success');
+    });
+  }
+
   async getCollection() {
     const list = [];
     await this.firestore.collection('collection').get().toPromise()
       .then(collection => {
         console.log('subscribe', collection);
         collection.docs.forEach(doc => {
-          list.push(doc.data());
+          const data = doc.data();
+          data.id = doc.id;
+          list.push(data);
         });
       });
     return list;

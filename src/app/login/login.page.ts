@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, Events } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
@@ -16,13 +16,15 @@ export class LoginPage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private fireAuth: AngularFireAuth
+    private fireAuth: AngularFireAuth,
+    private events: Events
   ) { }
 
   login() {
     this.fireAuth.auth.signInWithEmailAndPassword(this.form.email, this.form.password)
       .then((data) => {
         console.log('success', data);
+        this.events.publish('login: success');
       })
       .catch((error) => {
         console.log('error', error);

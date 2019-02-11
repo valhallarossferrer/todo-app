@@ -15,10 +15,11 @@ import { firebaseConfig, environment } from '../environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { PopoverComponent } from './popover/popover.component';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, PopoverComponent],
+  entryComponents: [PopoverComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
